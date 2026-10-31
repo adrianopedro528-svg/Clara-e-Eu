@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Clara</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in { animation: fadeIn 1.2s ease-in-out forwards; }
+        .fade-out { animation: fadeOut 0.5s ease-in-out forwards; }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes fadeOut { 
+            from { opacity: 1; transform: translateY(0); } 
+            to { opacity: 0; transform: translateY(-10px); } 
+        }
+        
+        .bg-hearts {
+            background-color: #fdf2f8; 
+            background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='%23fbcfe8' fill-opacity='0.4'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-hearts min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <div id="app" class="max-w-xl w-full bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-6 sm:p-8 text-center border border-pink-100 min-h-[400px] flex flex-col justify-center">
+    </div>
+
+    <script>
+        const app = document.getElementById('app');
+        let currentStep = -1;
+        let timeoutId = null;
+
+        // Carrega a música localmente 
+        const musicaFundo = new Audio("photograph.mp3");
+        musicaFundo.loop = true;
+
+        // Lista de fotos extraída do print para o carrossel
+        const fotosCarrossel = [
+            "1793409758894.jpg", "1793409758909.jpg", "1793409758924.jpg", "1793409758938.jpg", 
+            "1793409758952.jpg", "1793409758967.jpg", "1793409758981.jpg", "1793409758996.jpg", 
+            "1793409759010.jpg", "1793409759025.jpg", "1793409759038.jpg", "1793409759054.jpg", 
+            "1793409759068.jpg", "1793409759083.jpg", "1793409759099.jpg", "1793409759114.jpg", 
+            "1793409759127.jpg", "1793409759139.jpg", "1793409759160.jpg", "1793409759177.jpg", 
+            "1793409759193.jpg", "1793409759207.jpg", "1793409759228.jpg", "carrosel 1.jpg", 
+            "IMG-20250910-WA0010.jpg", "IMG-20251117-WA0031.jpg", "IMG-20260329-WA0018.jpg", 
+            "IMG-20260906-WA0008.jpg", "IMG-20261001-WA0027(1).jpg"
+        ];
+        let carouselIndex = 0;
+
+        function startExperience() {
+            // Inicia a música exatamente após a interação do usuário (clique)
+            musicaFundo.play().catch(e => console.log("O navegador exigiu permissão para tocar o áudio.", e));
+            nextStep();
+        }
+
+        function nextStep() {
+            if (timeoutId) clearTimeout(timeoutId);
+            
+            app.classList.remove('fade-in');
+            app.classList.add('fade-out');
+            
+            setTimeout(() => {
+                currentStep++;
+                render();
+                app.classList.remove('fade-out');
+                app.classList.add('fade-in');
+            }, 400); 
+        }
+
+        function mudarSlide(direcao) {
+            carouselIndex += direcao;
+            if (carouselIndex < 0) carouselIndex = fotosCarrossel.length - 1;
+            if (carouselIndex >= fotosCarrossel.length) carouselIndex = 0;
+            document.getElementById('img-carrossel').src = fotosCarrossel[carouselIndex];
+        }
+
+        function render() {
+            let html = '';
+
+            if (currentStep === -1) {
+                html = `
+                    <div class="flex flex-col items-center justify-center space-y-6 py-10">
+                        <span class="text-7xl animate-bounce">🎧</span>
+                        <h2 class="text-2xl font-semibold text-pink-600">Para melhor experiência coloque o fone de ouvido</h2>
+                    </div>
+                `;
+                timeoutId = setTimeout(nextStep, 5000);
+            }
+            else if (currentStep === 0) {
+                html = `
+                    <img src="1 foto.jpg" class="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border-4 border-white">
+                    <h1 class="text-3xl font-bold mb-8 text-pink-600">O que eu penso sobre nós</h1>
+                    <button onclick="startExperience()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-12 rounded-full transition-transform transform hover:scale-105 shadow-lg">
+                        Iniciar
+                    </button>
+                `;
+            } 
+            else if (currentStep === 1) {
+                html = `
+                    <img src="2 foto.jpg" class="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border-4 border-white">
+                    <p class="text-lg sm:text-xl mb-8 leading-relaxed text-gray-700">Nesses quase 2 anos tinha muitas coisas pra falar. Mas ao invés de falar, quis fazer algo mais divertido.</p>
+                    <button onclick="nextStep()" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-md">
+                        Avançar
+                    </button>
+                `;
+            }
+            else if (currentStep === 2) {
+                html = `
+                    <h2 class="text-2xl font-bold mb-6 text-pink-600">Mas antes, algumas perguntas...</h2>
+                    <div class="space-y-4 text-left mb-8">
+                        <div class="bg-pink-50 p-4 rounded-xl border border-pink-100">
+                            <label class="block font-semibold mb-2 text-gray-800 text-sm sm:text-base">1. Qual dia supostamente te pedi em namoro?</label>
+                            <input type="text" class="w-full p-2 border rounded-lg border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white">
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-xl border border-pink-100">
+                            <label class="block font-semibold mb-2 text-gray-800 text-sm sm:text-base">2. Qual a maior vergonha da minha vida?</label>
+                            <input type="text" class="w-full p-2 border rounded-lg border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white">
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-xl border border-pink-100">
+                            <label class="block font-semibold mb-2 text-gray-800 text-sm sm:text-base">3. Se eu pudesse ter qualquer profissão do mundo, qual seria?</label>
+                            <input type="text" class="w-full p-2 border rounded-lg border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white">
+                        </div>
+                    </div>
+                    <button onclick="nextStep()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-lg w-full">
+                        Responder e Avançar
+                    </button>
+                `;
+            }
+            else if (currentStep === 3) {
+                html = `
+                    <h2 class="text-2xl font-bold mb-6 text-pink-600">Respostas corretas 📝</h2>
+                    <div class="space-y-4 text-left mb-8">
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                            <p class="font-bold text-gray-800 mb-1">1. Qual dia supostamente te pedi em namoro?</p>
+                            <p class="text-green-700 font-semibold">Resposta: 01/10/2024</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                            <p class="font-bold text-gray-800 mb-1">2. Qual a maior vergonha da minha vida?</p>
+                            <p class="text-green-700 font-semibold">Resposta: Quando minha mãe encontrou uma camisinha debaixo do sofá</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                            <p class="font-bold text-gray-800 mb-1">3. Se eu pudesse ter qualquer profissão do mundo, qual seria?</p>
+                            <p class="text-green-700 font-semibold">Resposta: Qualquer coisa relacionada a música</p>
+                        </div>
+                    </div>
+                    <button onclick="nextStep()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-lg w-full">
+                        Avançar
+                    </button>
+                `;
+            }
+            else if (currentStep === 4) {
+                html = `
+                    <img src="3 foto.jpg" class="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border-4 border-white">
+                    <p class="text-lg mb-4 text-gray-700">Não sei se você respondeu certo. Mas a resposta não importa.</p>
+                    <p class="text-xl mb-4 font-bold text-pink-600">Porque você é a pergunta e a resposta, Clara.</p>
+                    <p class="text-lg mb-8 italic text-gray-600">Mesmo na dúvida sei que posso ter confiança em você.</p>
+                    <button onclick="nextStep()" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-md">
+                        Avançar
+                    </button>
+                `;
+            }
+            else if (currentStep === 5) {
+                html = `
+                    <img src="4 foto.jpg" class="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border-4 border-white">
+                    <p class="text-lg sm:text-xl mb-8 leading-relaxed text-gray-700">Tenho medo demais do futuro. Mas a expectativa de ter um futuro do seu lado ameniza esse medo.</p>
+                    <button onclick="nextStep()" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-md">
+                        Avançar
+                    </button>
+                `;
+            }
+            else if (currentStep === 6) {
+                html = `
+                    <img src="5 foto.jpg" class="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border-4 border-white">
+                    <p class="text-lg sm:text-xl mb-8 leading-relaxed text-gray-700">Mesmo com as nossas diferenças, acredito que valha a pena querer conquistar uma vida juntos. E quero essa vida com você.</p>
+                    <button onclick="nextStep()" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-3 px-8 rounded-full transition-transform transform hover:scale-105 shadow-md">
+                        Avançar
+                    </button>
+                `;
+            }
+            else if (currentStep === 7) {
+                html = `
+                    <img src="6 foto.jpg" class="w-full h-64 sm:h-72 object-cover rounded-2xl mb-6 shadow-md border-4 border-white">
+                    <p class="text-base sm:text-lg mb-2 text-gray-700">A questão toda é que eu te amo, te amo tanto quanto ontem e te amo mais amanhã.</p>
+                    <p class="text-base sm:text-lg mb-2 text-gray-700">Quero você do meu lado. Você é meu amuleto da sorte, minha base, meu apoio.</p>
+                    <p class="text-lg sm:text-xl font-bold text-pink-600">Obrigado por me amar, me ajudar, me tolerar e me aceitar.</p>
+                `;
+                timeoutId = setTimeout(nextStep, 3500);
+            }
+            else if (currentStep === 8) {
+                html = `
+                    <div class="relative mb-8 group">
+                        <img id="img-carrossel" src="${fotosCarrossel[0]}" class="w-full h-72 sm:h-96 object-cover rounded-2xl shadow-md border-4 border-white transition-opacity duration-300">
+                        
+                        <button onclick="mudarSlide(-1)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white text-pink-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg font-bold text-xl">
+                            &#10094;
+                        </button>
+                        
+                        <button onclick="mudarSlide(1)" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white text-pink-600 rounded-full w-10 h-10 flex items-center justify-center shadow-lg font-bold text-xl">
+                            &#10095;
+                        </button>
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-6 italic">Passe para o lado para ver mais de nós</p>
+                    
+                    <a href="https://youtu.be/dQw4w9WgXcQ?si=-bl6TKRsjnkYyB1P" class="inline-block bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-10 rounded-full transition-transform transform hover:scale-105 shadow-xl w-full sm:w-auto">
+                        Com amor, Pedro ❤️
+                    </a>
+                `;
+            }
+
+            app.innerHTML = html;
+        }
+
+        render();
+    </script>
+</body>
+</html>
