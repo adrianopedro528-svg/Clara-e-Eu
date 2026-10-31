@@ -27,6 +27,9 @@
 </head>
 <body class="bg-hearts min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
 
+    <!-- Áudio fixado diretamente no HTML para funcionar no celular -->
+    <audio id="musicaFundo" src="photograph.mp3" loop preload="auto"></audio>
+
     <div id="app" class="max-w-xl w-full bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-6 sm:p-8 text-center border border-pink-100 min-h-[400px] flex flex-col justify-center">
     </div>
 
@@ -34,10 +37,6 @@
         const app = document.getElementById('app');
         let currentStep = -1;
         let timeoutId = null;
-
-        // Carrega a música localmente 
-        const musicaFundo = new Audio("photograph.mp3");
-        musicaFundo.loop = true;
 
         // Lista de fotos extraída do print para o carrossel
         const fotosCarrossel = [
@@ -53,8 +52,8 @@
         let carouselIndex = 0;
 
         function startExperience() {
-            // Inicia a música exatamente após a interação do usuário (clique)
-            musicaFundo.play().catch(e => console.log("O navegador exigiu permissão para tocar o áudio.", e));
+            const musica = document.getElementById('musicaFundo');
+            musica.play().catch(e => console.log("Erro de permissão do navegador:", e));
             nextStep();
         }
 
